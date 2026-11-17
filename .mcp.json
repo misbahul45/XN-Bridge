@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "xn-bridge": {
+      "command": "/home/misbahul45/code/XN-Bridge/.venv/bin/python",
+      "args": [
+        "-m",
+        "xnbridge.server"
+      ],
+      "env": {
+        "XN_BRIDGE_HOME": "/home/misbahul45/code/XN-Bridge/data"
+      }
+    },
+    "osm": {
+      "command": "/home/misbahul45/.nvm/versions/node/v24.16.0/bin/node",
+      "args": [
+        "/home/misbahul45/code/XN-Bridge/.providers/osm/node_modules/@cyanheads/openstreetmap-mcp-server/dist/index.js"
+      ],
+      "env": {
+        "MCP_TRANSPORT_TYPE": "stdio",
+        "OSM_USER_AGENT": "xn-bridge-career-research/0.1"
+      }
+    }
+  }
+}

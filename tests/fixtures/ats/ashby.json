@@ -1,0 +1,7 @@
+{"jobs": [
+  {"id": "a-100", "title": "PKL Backend Developer", "location": "Surabaya", "department": "Engineering", "employmentType": "Intern", "isRemote": false,
+   "jobUrl": "https://jobs.ashbyhq.com/northwind/a-100", "applyUrl": "https://jobs.ashbyhq.com/northwind/a-100/application", "publishedAt": "2026-11-08T00:00:00Z", "isListed": true,
+   "descriptionPlain": "Praktik kerja lapangan for vocational and university students. Mahasiswa aktif only.\nRequirements:\nPython required.\nDuration 4 months.\nOn-site in Surabaya with a stipend."},
+  {"id": "a-101", "title": "Hidden Draft Intern", "location": "Surabaya", "employmentType": "Intern", "isRemote": false, "jobUrl": "https://jobs.ashbyhq.com/northwind/a-101",
+   "applyUrl": "https://jobs.ashbyhq.com/northwind/a-101/application", "publishedAt": "2026-11-08T00:00:00Z", "isListed": false, "descriptionPlain": "Not public."}
+]}

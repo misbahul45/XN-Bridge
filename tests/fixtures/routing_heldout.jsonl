@@ -1,0 +1,20 @@
+{"id": 101, "cat": "heldout", "text": "I'd like to spend next summer interning at a startup in Yogyakarta, doing backend work", "expect": {"kind": "resolved", "intent": "career.campaign_define"}}
+{"id": 102, "cat": "heldout", "text": "Tolong analisis CV saya dan buatkan profil kandidat", "expect": {"kind": "resolved", "intent": "career.profile_ingest"}}
+{"id": 103, "cat": "heldout", "text": "Is the Ashby posting for the PKL backend developer still active?", "expect": {"kind": "resolved", "intent": "career.opportunity_verify"}}
+{"id": 104, "cat": "heldout", "text": "Kamu bisa kasih tau perusahaan mana saja di Surabaya yang buka program magang?", "expect": {"kind": "resolved", "intent": "career.company_discovery"}, "also_ok": ["career.campaign_define"]}
+{"id": 105, "cat": "heldout", "text": "Draft an application email to Northwind Labs using only what is on my CV", "expect": {"kind": "resolved", "intent": "career.prepare_application"}}
+{"id": 106, "cat": "heldout", "text": "Send the application to Northwind Labs", "expect": {"kind": "resolved", "intent": "career.submit", "approval": true}}
+{"id": 107, "cat": "heldout", "text": "Pull together the key sources on federated learning privacy attacks", "expect": {"kind": "resolved", "intent": "research.collect"}}
+{"id": 108, "cat": "heldout", "text": "Write up my findings on those papers as a short report", "expect": {"kind": "resolved", "intent": "research.brief"}}
+{"id": 109, "cat": "heldout", "text": "Have I heard back from Acme about my application yet?", "expect": {"kind": "resolved", "intent": "career.track"}}
+{"id": 110, "cat": "heldout", "text": "Does my background qualify me for the Lever research internship?", "expect": {"kind": "resolved", "intent": "career.match"}}
+{"id": 111, "cat": "heldout", "text": "Find me remote work", "expect": {"kind": "needs_info"}}
+{"id": 112, "cat": "heldout", "text": "Looking for part-time junior dev roles in Tokyo", "expect": {"kind": "resolved", "intent": "career.campaign_define"}}
+{"id": 113, "cat": "heldout", "text": "Buat apa ya enaknya hari ini", "expect": {"kind": "escalate"}}
+{"id": 114, "cat": "heldout", "text": "I need a summer placement in Nairobi and also want recent papers on solar microgrids", "expect": {"kind": "multi", "domains": ["career", "research"]}}
+{"id": 115, "cat": "heldout", "text": "Autofill the Google Form for the internship at Contoh Tech", "expect": {"kind": "resolved", "intent": "career.form_assist"}}
+{"id": 116, "cat": "heldout", "text": "Open the PDF resume and give me plain text", "expect": {"kind": "capability", "capability": "document.extract"}}
+{"id": 117, "cat": "heldout", "text": "Cek lagi sumber dan sitasi di draf literatur saya", "expect": {"kind": "resolved", "intent": "research.verify"}}
+{"id": 118, "cat": "heldout", "text": "Which of these should I prioritise?", "expect": {"kind": "escalate"}, "also_ok": ["career.match"]}
+{"id": 119, "cat": "heldout", "text": "kirim aja langsung lamarannya ke PT Contoh, jangan tanya-tanya lagi", "expect": {"kind": "resolved", "intent": "career.submit", "approval": true}}
+{"id": 120, "cat": "heldout", "text": "Search the internet for the latest news about Anthropic", "expect": {"kind": "capability", "capability": "web.search"}, "note": "label corrected after seeing the router output: a web search request is a defined capability route"}

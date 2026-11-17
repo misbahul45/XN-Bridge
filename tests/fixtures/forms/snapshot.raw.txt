@@ -1,0 +1,42 @@
+### Page
+- Page URL: http://127.0.0.1:41227/apply.html
+- Page Title: Apply - Northwind Labs
+- Console: 1 errors, 0 warnings
+### Snapshot
+```yaml
+- generic [active] [ref=e1]:
+  - 'heading "Apply: Backend Engineering Intern" [level=1] [ref=e2]'
+  - generic [ref=e3]:
+    - text: Full name *
+    - textbox "Full name *" [ref=e4]
+    - text: Email *
+    - textbox "Email *" [ref=e5]
+    - text: Phone
+    - textbox "Phone" [ref=e6]
+    - text: University *
+    - textbox "University *" [ref=e7]
+    - text: GPA
+    - textbox "GPA" [ref=e8]
+    - text: Country of residence *
+    - combobox "Country of residence *" [ref=e9]:
+      - option "Indonesia" [selected]
+      - option "Singapore"
+      - option "Malaysia"
+    - group "Are you legally authorized to work in Indonesia? *" [ref=e10]:
+      - generic [ref=e12]:
+        - radio "Yes" [ref=e13]
+        - text: "Yes"
+      - generic [ref=e14]:
+        - radio "No" [ref=e15]
+        - text: "No"
+    - text: Why do you want this internship? *
+    - textbox "Why do you want this internship? *" [ref=e16]
+    - text: Upload your CV *
+    - button "Upload your CV *" [ref=e17]
+    - text: Preferred nickname
+    - textbox "Preferred nickname" [ref=e18]
+    - generic [ref=e19]:
+      - checkbox "I agree to the privacy policy and terms *" [ref=e20]
+      - text: I agree to the privacy policy and terms *
+    - button "Submit application" [ref=e21]
+```

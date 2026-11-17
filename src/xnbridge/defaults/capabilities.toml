@@ -1,0 +1,176 @@
+
+[capability."web.search"]
+description = "Search the public web"
+degraded = "No verified search provider. Ask the user for company URLs or a company list; do not invent results."
+[[capability."web.search".provider]]
+server = "web_search"
+tool = "search"
+cost = "FREE_LIMITED"
+[[capability."web.search".provider]]
+server = "xninetzy"
+tool = "web_search"
+cost = "FREE_LOCAL"
+
+[capability."web.fetch"]
+description = "Fetch and read a public web page"
+degraded = "No fetch provider. Ask the user to paste the page text or use the browser capability."
+[[capability."web.fetch".provider]]
+server = "web_search"
+tool = "fetchWebContent"
+cost = "FREE_LIMITED"
+[[capability."web.fetch".provider]]
+server = "xninetzy"
+tool = "web_fetch"
+cost = "FREE_LOCAL"
+
+[capability."career.listings"]
+description = "Structured career/job/internship listing search provided by an existing server"
+degraded = "No structured listing provider. Fall back to web.search + bridge ATS fetch (ats.board_read)."
+[[capability."career.listings".provider]]
+server = "career-public"
+tool = "search_jobs"
+cost = "FREE_LIMITED"
+[[capability."career.listings".provider]]
+server = "xninetzy"
+tool = "career_search_internships"
+cost = "FREE_LOCAL"
+[[capability."career.listings".provider]]
+server = "xninetzy"
+tool = "career_search_jobs"
+cost = "FREE_LOCAL"
+[[capability."career.listings".provider]]
+server = "xninetzy"
+tool = "career_search_companies"
+cost = "FREE_LOCAL"
+
+[capability."ats.board_read"]
+description = "Read a public ATS job board (Greenhouse, Lever, Ashby) as structured JSON"
+degraded = "Bridge ATS adapter disabled (offline mode). Use browser.inspect on the careers page."
+[[capability."ats.board_read".provider]]
+server = "xn-bridge"
+tool = "domain_action"
+cost = "FREE_LOCAL"
+
+[capability."browser.navigate"]
+description = "Open a page in a real browser"
+degraded = "No browser provider. Give the user verified links and prepared documents."
+[[capability."browser.navigate".provider]]
+server = "playwright"
+tool = "browser_navigate"
+cost = "FREE_LOCAL"
+
+[capability."browser.inspect"]
+description = "Read page structure (accessibility snapshot) without changing anything"
+degraded = "No browser provider. Give the user verified links; the form must be filled manually."
+[[capability."browser.inspect".provider]]
+server = "playwright"
+tool = "browser_snapshot"
+cost = "FREE_LOCAL"
+[[capability."browser.inspect".provider]]
+server = "playwright"
+tool = "browser_find"
+cost = "FREE_LOCAL"
+
+[capability."browser.form_fill"]
+description = "Fill form fields in a real browser"
+degraded = "No browser provider. Provide the prepared answers; the user fills the form manually."
+[[capability."browser.form_fill".provider]]
+server = "playwright"
+tool = "browser_fill_form"
+cost = "FREE_LOCAL"
+[[capability."browser.form_fill".provider]]
+server = "playwright"
+tool = "browser_type"
+cost = "FREE_LOCAL"
+
+[capability."browser.upload"]
+description = "Attach a local file to a form upload field"
+degraded = "No browser provider. The user attaches the file manually."
+[[capability."browser.upload".provider]]
+server = "playwright"
+tool = "browser_file_upload"
+cost = "FREE_LOCAL"
+
+[capability."document.extract"]
+description = "Convert a local document (PDF/DOCX/...) to text/markdown"
+degraded = "No extractor. Ask the user to paste the CV text; facts stay UNKNOWN until provided."
+[[capability."document.extract".provider]]
+server = "markitdown"
+tool = "convert_to_markdown"
+cost = "FREE_LOCAL"
+[[capability."document.extract".provider]]
+server = "xninetzy"
+tool = "document_ingest"
+cost = "FREE_LOCAL"
+
+[capability."document.generate"]
+description = "Generate a DOCX/PDF document from prepared content"
+degraded = "No generator. Deliver the prepared Markdown drafts; the user exports them."
+[[capability."document.generate".provider]]
+server = "document_generator"
+tool = "gerar_documento_word"
+cost = "FREE_LOCAL"
+[[capability."document.generate".provider]]
+server = "document_generator"
+tool = "gerar_documento_pdf"
+cost = "FREE_LOCAL"
+[[capability."document.generate".provider]]
+server = "xninetzy"
+tool = "artifact_render"
+cost = "FREE_LOCAL"
+
+[capability."paper.search"]
+description = "Search academic papers"
+degraded = "No paper search provider. Use web.search restricted to scholarly sources."
+[[capability."paper.search".provider]]
+server = "paper_research"
+tool = "search_papers"
+cost = "FREE_LIMITED"
+[[capability."paper.search".provider]]
+server = "xninetzy"
+tool = "research_search_papers"
+cost = "FREE_LOCAL"
+
+[capability."code.inspect"]
+description = "Structural code search and snippets"
+degraded = "No code graph provider. Use filesystem search."
+[[capability."code.inspect".provider]]
+server = "codebase-memory-mcp"
+tool = "search_graph"
+cost = "FREE_LOCAL"
+
+[capability."workflow.persist"]
+description = "Durable workflow state, checkpoints, resume"
+degraded = "Bridge unavailable: no durable state; operate read-only and stateless."
+[[capability."workflow.persist".provider]]
+server = "xn-bridge"
+tool = "workflow_checkpoint"
+cost = "FREE_LOCAL"
+
+[capability."evidence.store"]
+description = "Evidence with provenance, digests and verification state"
+degraded = "Bridge unavailable: findings cannot be marked verified."
+[[capability."evidence.store".provider]]
+server = "xn-bridge"
+tool = "evidence_register"
+cost = "FREE_LOCAL"
+
+[capability."email.draft"]
+description = "Draft an application email (text only, never sent)"
+degraded = "Drafts are produced as local text; sending is always manual."
+
+[capability."email.read"]
+description = "Read Gmail application replies after owner OAuth login"
+degraded = "Gmail is not authenticated or unavailable. Ask the owner for the reply text; never infer a status."
+[[capability."email.read".provider]]
+server = "gmail"
+tool = "search_gmail_messages"
+cost = "FREE_LIMITED"
+[[capability."email.read".provider]]
+server = "gmail"
+tool = "get_gmail_message_content"
+cost = "FREE_LIMITED"
+
+[capability."email.send"]
+description = "Send an email to an external recipient"
+degraded = "No email provider in the inventory. Produce a draft; the user sends it manually."

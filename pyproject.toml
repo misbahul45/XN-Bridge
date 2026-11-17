@@ -1,0 +1,37 @@
+[project]
+name = "xn-bridge"
+version = "0.1.0"
+description = "Local, domain-agnostic MCP capability coordination layer (stdio). First domain: career intelligence."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "mcp>=2.3.0,<3",
+    # Already pulled in transitively by `mcp` (pyjwt[crypto]); declared explicitly
+    # because approval signatures use Ed25519. Adds zero new packages to the lock.
+    "cryptography>=45",
+]
+
+[project.scripts]
+xnbridge = "xnbridge.cli:main"
+xn-bridge-server = "xnbridge.server:main"
+
+[build-system]
+requires = ["uv_build>=0.11,<0.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "xnbridge"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "host: needs the real Codex host (set XN_RUN_HOST_TESTS=1)",
+    "providers: needs installed document_generator and markitdown servers (set XN_RUN_PROVIDER_TESTS=1)",
+    "live: needs public internet (set XN_RUN_LIVE_TESTS=1)",
+]
+addopts = "-ra -q"

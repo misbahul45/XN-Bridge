@@ -1,0 +1,49 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "mcp__xn-bridge__*",
+      "mcp__web_search__search",
+      "mcp__web_search__fetchWebContent",
+      "mcp__markitdown__convert_to_markdown",
+      "mcp__document_generator__*",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_navigate_back",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_find",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_network_requests",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_tabs",
+      "mcp__playwright__browser_close",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_fill_form",
+      "mcp__playwright__browser_select_option",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_press_key",
+      "mcp__playwright__browser_file_upload",
+      "mcp__playwright__browser_drag",
+      "mcp__playwright__browser_drop",
+      "mcp__playwright__browser_handle_dialog",
+      "mcp__osm__openstreetmap_search_places",
+      "mcp__osm__openstreetmap_query_nearby",
+      "mcp__osm__openstreetmap_query_bbox",
+      "mcp__osm__openstreetmap_query_raw"
+    ],
+    "ask": [
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_run_code_unsafe"
+    ],
+    "deny": [
+      "mcp__modal-mcp-server__*",
+      "mcp__xninetzy__career_fill_application",
+      "mcp__xninetzy__career_confirm_application",
+      "mcp__xninetzy__career_open_application",
+      "mcp__xninetzy__career_close_application",
+      "mcp__osm__openstreetmap_reverse_geocode",
+      "mcp__osm__openstreetmap_lookup_objects"
+    ]
+  }
+}

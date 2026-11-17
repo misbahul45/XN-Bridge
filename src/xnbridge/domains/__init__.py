@@ -1,0 +1,10 @@
+from __future__ import annotations
+
+from ..spec import DomainRegistry
+
+
+def register_all(registry: DomainRegistry) -> None:
+    from . import career, research
+
+    registry.register(research.SPEC, research.actions())
+    registry.register(career.SPEC, career.actions())

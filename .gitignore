@@ -1,0 +1,29 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# XN-Bridge local state: databases, artifacts, approval keys, logs, backups.
+# Never commit: may contain candidate CVs, evidence and signing material.
+/data/
+*.db
+*.db-wal
+*.db-shm
+approver.key.enc
+.xn-scratch/
+
+# Test / benchmark byproducts
+.pytest_cache/
+/bench-out/
+.playwright-mcp/
+/generated_documents/
+
+# Isolated, pinned third-party MCP installations and OAuth data.
+/.providers/
+/output/playwright/

@@ -1,0 +1,222 @@
+
+[limits]
+max_tool_calls = 300
+max_retries_per_step = 2
+max_provider_switches = 3
+max_stages = 12
+workflow_deadline_s = 604800
+max_browser_ops = 150
+max_payload_bytes = 262144
+max_entities_per_action = 500
+max_rss_mb = 768
+min_mem_available_mb = 300
+max_cpu_load_per_core = 2.0
+catalog_ttl_s = 21600
+approval_ttl_s = 3600
+stale_started_s = 120
+
+[evidence_ttl_s]
+listing = 259200
+company = 2592000
+default = 604800
+
+[routing]
+l1_enabled = false
+l1_model = "qwen2.5:1.5b"
+l1_url = "http://127.0.0.1:11434"
+l1_timeout_s = 30
+l1_min_mem_available_mb = 2500
+
+[network]
+offline = false
+allowed_ats_hosts = [
+  "boards-api.greenhouse.io",
+  "api.lever.co",
+  "api.ashbyhq.com",
+]
+
+[autonomy]
+unattended_external_writes = false
+max_external_per_day = 25
+max_external_per_origin_per_day = 5
+stop_file = "STOP_EXTERNAL"
+
+[trust]
+read_heuristic_servers = [
+  "web_search", "paper_research", "markitdown", "context7", "codebase-memory-mcp",
+  "sequential-thinking", "youtube_search",
+]
+
+[[risk]]
+server = "playwright"
+tool = "browser_navigate"
+risk = "READ"
+[[risk]]
+server = "playwright"
+tool = "browser_snapshot"
+risk = "READ"
+[[risk]]
+server = "playwright"
+tool = "browser_take_screenshot"
+risk = "READ"
+[[risk]]
+server = "playwright"
+tool = "browser_find"
+risk = "READ"
+[[risk]]
+server = "playwright"
+tool = "browser_console_messages"
+risk = "READ"
+[[risk]]
+server = "playwright"
+tool = "browser_network_requests"
+risk = "READ"
+[[risk]]
+server = "playwright"
+tool = "browser_wait_for"
+risk = "READ"
+[[risk]]
+server = "playwright"
+tool = "browser_tabs"
+risk = "READ"
+[[risk]]
+server = "playwright"
+tool = "browser_close"
+risk = "READ"
+[[risk]]
+server = "playwright"
+tool = "browser_navigate_back"
+risk = "READ"
+[[risk]]
+server = "playwright"
+tool = "browser_resize"
+risk = "READ"
+[[risk]]
+server = "playwright"
+tool = "browser_run_code_unsafe"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "playwright"
+tool = "browser_evaluate"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "playwright"
+tool = "browser_*"
+risk = "LOCAL_WRITE"
+maybe_external = true
+[[risk]]
+server = "document_generator"
+tool = "*"
+risk = "LOCAL_WRITE"
+[[risk]]
+server = "markitdown"
+tool = "convert_to_markdown"
+risk = "READ"
+[[risk]]
+server = "web_search"
+tool = "*"
+risk = "READ"
+[[risk]]
+server = "career-public"
+tool = "search_jobs"
+risk = "READ"
+[[risk]]
+server = "career-public"
+tool = "latest_jobs"
+risk = "READ"
+[[risk]]
+server = "career-public"
+tool = "jobs_by_board"
+risk = "READ"
+[[risk]]
+server = "career-public"
+tool = "company_jobs"
+risk = "READ"
+[[risk]]
+server = "career-public"
+tool = "job_categories"
+risk = "READ"
+[[risk]]
+server = "gmail"
+tool = "search_gmail_messages"
+risk = "READ"
+[[risk]]
+server = "gmail"
+tool = "get_gmail_message_content"
+risk = "READ"
+[[risk]]
+server = "gmail"
+tool = "get_gmail_messages_content_batch"
+risk = "READ"
+[[risk]]
+server = "xninetzy"
+tool = "web_search"
+risk = "READ"
+[[risk]]
+server = "xninetzy"
+tool = "web_fetch"
+risk = "READ"
+[[risk]]
+server = "xninetzy"
+tool = "web_extract"
+risk = "READ"
+[[risk]]
+server = "xninetzy"
+tool = "research_*"
+risk = "READ"
+[[risk]]
+server = "xninetzy"
+tool = "career_search_*"
+risk = "READ"
+[[risk]]
+server = "xninetzy"
+tool = "career_find_*"
+risk = "READ"
+[[risk]]
+server = "xninetzy"
+tool = "career_company_research"
+risk = "READ"
+[[risk]]
+server = "xninetzy"
+tool = "career_get_*"
+risk = "READ"
+[[risk]]
+server = "xninetzy"
+tool = "career_list_*"
+risk = "READ"
+[[risk]]
+server = "xninetzy"
+tool = "career_fill_application"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "xninetzy"
+tool = "career_confirm_application"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "xninetzy"
+tool = "career_open_application"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "xninetzy"
+tool = "career_close_application"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "xninetzy"
+tool = "career_*"
+risk = "LOCAL_WRITE"
+[[risk]]
+server = "xninetzy"
+tool = "document_*"
+risk = "LOCAL_WRITE"
+[[risk]]
+server = "xninetzy"
+tool = "artifact_*"
+risk = "LOCAL_WRITE"
+[[risk]]
+server = "paper_research"
+tool = "search_*"
+risk = "READ"
+[[risk]]
+server = "xn-bridge"
+tool = "*"
+risk = "LOCAL_WRITE"

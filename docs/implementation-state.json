@@ -1,0 +1,13 @@
+{
+  "project": "XN-Bridge",
+  "state": "VERIFIED",
+  "state_scope": "completed independent local implementation and acceptance work",
+  "overall_completion": "PARTIALLY_COMPLETE",
+  "objective": "Local host-native capability coordination with tested generic state, career fixtures, secure supervision and honest integration evidence",
+  "verified_milestones": ["runtime audit", "official SDK stdio integration", "Codex host tool and skill discovery", "generic workflow persistence and recovery", "career success and timeout fixtures", "second-domain fixture", "local document providers", "small-model evaluation"],
+  "final_tests": {"passed": 268, "failed": 0, "skipped": 0, "seconds": 101.53},
+  "remaining": ["live company discovery unavailable with current providers", "browser scope approval channel unavailable", "host-wide external-action enforcement unverified"],
+  "protected_dependency": "Xninetzy source, configuration and schema unchanged",
+  "rollback": "Codex config backup config.toml.xnb-backup-1794856261494459778; source changes remain uncommitted",
+  "next_action": "Repair the supported host approval channel and live search provider, then rerun live discovery/browser acceptance; keep real submissions manual unless independent host enforcement is verified"
+}
