@@ -3,6 +3,7 @@ from __future__ import annotations
 import functools
 import json
 import sys
+import time
 from typing import Any, Callable, Literal
 
 from mcp.server import MCPServer
@@ -93,9 +94,12 @@ def _check_resources(bridge: Bridge) -> None:
 
 
 def build_router(bridge: Bridge) -> Router:
+    from .routing import load_intents
+
+    cache: dict[str, Any] = {}
     def availability(cap: str) -> str:
         try:
-            return bridge.registry.resolve(cap)["status"]
+            return bridge.registry.resolve(cap, current_host_fp=current_fp())["status"]
         except NotFound:
             return "UNKNOWN_CAPABILITY"
 
@@ -103,7 +107,26 @@ def build_router(bridge: Bridge) -> Router:
     r = bridge.settings.policy["routing"]
     if r.get("l1_enabled"):
         classifier = OllamaClassifier(r["l1_model"], r["l1_url"], float(r["l1_timeout_s"]), int(r["l1_min_mem_available_mb"]))
-    return Router(availability=availability, classifier=classifier)
+
+    def current_fp() -> str | None:
+        now = time.monotonic()
+        if cache.get("at", -1e9) + 5 < now:
+            try:
+                specs = load_host_servers()
+                cache["fp"] = host_fingerprint(specs) if specs else None
+            except Exception:
+                cache["fp"] = None
+            cache["at"] = now
+        return cache.get("fp")
+
+    return Router(
+        availability=availability,
+        classifier=classifier,
+        intents=load_intents(bridge.settings, bridge.domains),
+        capabilities=bridge.settings.capabilities.get("capability", {}),
+        resolver=lambda cap: bridge.registry.resolve(cap, current_host_fp=current_fp()),
+        stages={spec.name: spec.stages for spec in bridge.domains.specs()},
+    )
 
 
 def create_server(bridge: Bridge) -> MCPServer:
@@ -128,6 +151,7 @@ def create_server(bridge: Bridge) -> MCPServer:
             "schema_version": bridge.store.schema_version,
             "approver_key_configured": bridge.approvals.key_health()["configured"],
             "unattended_external_writes": bridge.executions._unattended_enabled(),
+            "unattended_capabilities": bridge.settings.policy.get("autonomy", {}).get("capabilities", ["email.send", "browser.*"]),
             "external_writes_stopped": (bridge.settings.home / str(bridge.settings.policy.get("autonomy", {}).get("stop_file", "STOP_EXTERNAL"))).exists(),
             "catalog": {"stale": cat["stale"], "age_s": cat["age_s"], "servers": cat["servers"], "tools": cat["tools"]},
             "domains": bridge.domains.domains(),
@@ -233,7 +257,7 @@ def create_server(bridge: Bridge) -> MCPServer:
         claim: str,
         origin: Origin,
         source_ref: str | None = None,
-        content: str | None = None,
+        content: str | dict[str, Any] | list[Any] | None = None,
         excerpt: str | None = None,
         verification: Verification = "UNVERIFIED",
         ttl_class: str = "default",
@@ -244,6 +268,8 @@ def create_server(bridge: Bridge) -> MCPServer:
         with bridge.store.read() as con:
             if con.execute("SELECT 1 FROM workflows WHERE id=?", (workflow_id,)).fetchone() is None:
                 raise NotFound(f"workflow '{workflow_id}' not found")
+        if isinstance(content, (dict, list)):
+            content = canonical_json(content)
         rec = bridge.evidence.register(
             workflow_id=workflow_id, claim=claim, origin=origin, requested=verification, source_ref=source_ref, provider=provider,
             content=content, excerpt=excerpt, ttl_class=ttl_class, retrieved_at=retrieved_at, uncertainty=note,

@@ -4,7 +4,8 @@ from ..spec import DomainRegistry
 
 
 def register_all(registry: DomainRegistry) -> None:
-    from . import career, research
+    from . import career, research, social
 
     registry.register(research.SPEC, research.actions())
     registry.register(career.SPEC, career.actions())
+    registry.register(social.SPEC, social.actions())

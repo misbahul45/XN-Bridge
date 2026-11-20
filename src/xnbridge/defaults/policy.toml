@@ -37,7 +37,8 @@ allowed_ats_hosts = [
 
 [autonomy]
 unattended_external_writes = false
-max_external_per_day = 25
+capabilities = ["email.send", "browser.*"]
+max_external_per_day = 100
 max_external_per_origin_per_day = 5
 stop_file = "STOP_EXTERNAL"
 
@@ -220,3 +221,116 @@ risk = "READ"
 server = "xn-bridge"
 tool = "*"
 risk = "LOCAL_WRITE"
+[[risk]]
+server = "osm"
+tool = "openstreetmap_*"
+risk = "READ"
+[[risk]]
+server = "careers-crawl"
+tool = "crawl_*"
+risk = "READ"
+[[risk]]
+server = "gmaps"
+tool = "gmaps_search"
+risk = "READ"
+[[risk]]
+server = "gmail-send"
+tool = "gmail_send"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "gmail-send"
+tool = "gmail_send_status"
+risk = "READ"
+
+[[risk]]
+server = "xn-interact"
+tool = "social_auth_connect"
+risk = "LOCAL_WRITE"
+[[risk]]
+server = "xn-interact"
+tool = "social_auth_status"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_auth_disconnect"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "xn-interact"
+tool = "social_accounts_list"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_capabilities_get"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_content_list"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_content_get"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_content_create"
+risk = "LOCAL_WRITE"
+[[risk]]
+server = "xn-interact"
+tool = "social_content_publish"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "xn-interact"
+tool = "social_content_update"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "xn-interact"
+tool = "social_content_delete"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "xn-interact"
+tool = "social_engagement_list"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_engagement_execute"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "xn-interact"
+tool = "social_search"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_analytics_get"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_media_upload"
+risk = "LOCAL_WRITE"
+[[risk]]
+server = "xn-interact"
+tool = "social_workflows_execute"
+risk = "EXTERNAL_WRITE"
+[[risk]]
+server = "xn-interact"
+tool = "social_workflows_status"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_workflows_cancel"
+risk = "LOCAL_WRITE"
+[[risk]]
+server = "xn-interact"
+tool = "social_results_get"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_approvals_status"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_system_health"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "*"
+risk = "EXTERNAL_WRITE"

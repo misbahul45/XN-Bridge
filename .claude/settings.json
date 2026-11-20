@@ -30,7 +30,12 @@
       "mcp__osm__openstreetmap_search_places",
       "mcp__osm__openstreetmap_query_nearby",
       "mcp__osm__openstreetmap_query_bbox",
-      "mcp__osm__openstreetmap_query_raw"
+      "mcp__osm__openstreetmap_query_raw",
+      "mcp__careers-crawl__crawl_page",
+      "mcp__careers-crawl__crawl_site",
+      "mcp__gmaps__gmaps_search",
+      "mcp__gmail-send__gmail_send",
+      "mcp__gmail-send__gmail_send_status"
     ],
     "ask": [
       "mcp__playwright__browser_evaluate",

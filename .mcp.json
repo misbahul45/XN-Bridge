@@ -7,7 +7,8 @@
         "xnbridge.server"
       ],
       "env": {
-        "XN_BRIDGE_HOME": "/home/misbahul45/code/XN-Bridge/data"
+        "XN_BRIDGE_HOME": "/home/misbahul45/code/XN-Bridge/data",
+        "XN_BRIDGE_HOST": "claude"
       }
     },
     "osm": {
@@ -18,6 +19,41 @@
       "env": {
         "MCP_TRANSPORT_TYPE": "stdio",
         "OSM_USER_AGENT": "xn-bridge-career-research/0.1"
+      }
+    },
+    "careers-crawl": {
+      "command": "/home/misbahul45/code/XN-Bridge/.venv/bin/python",
+      "args": [
+        "/home/misbahul45/code/XN-Bridge/.providers/crawl/xn_careers_crawl.py"
+      ],
+      "env": {}
+    },
+    "gmaps": {
+      "command": "/home/misbahul45/code/XN-Bridge/.venv/bin/python",
+      "args": [
+        "/home/misbahul45/code/XN-Bridge/.providers/gmaps/xn_gmaps_mcp.py"
+      ],
+      "env": {
+        "XN_BRIDGE_HOME": "/home/misbahul45/code/XN-Bridge/data"
+      }
+    },
+    "gmail-send": {
+      "command": "/home/misbahul45/code/XN-Bridge/.providers/gmail/bin/python",
+      "args": [
+        "/home/misbahul45/code/XN-Bridge/.providers/gmail_send/xn_gmail_send.py"
+      ],
+      "env": {
+        "XN_BRIDGE_HOME": "/home/misbahul45/code/XN-Bridge/data"
+      }
+    },
+    "xn-interact": {
+      "command": "/home/misbahul45/.bun/bin/bun",
+      "args": [
+        "run",
+        "/home/misbahul45/code/XN-Interact/src/main.ts"
+      ],
+      "env": {
+        "XN_INTERACT_HOME": "/home/misbahul45/code/XN-Interact/data"
       }
     }
   }

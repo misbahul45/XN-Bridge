@@ -1,0 +1,68 @@
+[[intent]]
+domain = "social"
+name = "connect"
+stage = "connect"
+skill = "xn-social"
+capabilities = ["social.account.connect"]
+groups = [
+  ["\\b(linkedin|instagram|ig|tiktok|twitter|threads|reddit|facebook|fb|sosmed)\\b", "\\bx\\.com\\b", "\\b(media sosial|social media)\\b"],
+  ["\\b(connect|hubungkan|sambungkan|login|authori[sz]e|otorisasi|reauth)\\w*"],
+]
+negatives = ["\\b(lowongan|magang|internships?|intern|pkl|jobs?|apply|melamar|lamar|cv|resume|rekrutmen|hiring)\\b"]
+summary = "connect or reauthorize a social account through official OAuth"
+
+[[intent]]
+domain = "social"
+name = "publish"
+stage = "prepare"
+skill = "xn-social"
+capabilities = ["social.content.draft", "social.content.publish"]
+groups = [
+  ["\\b(linkedin|instagram|ig|tiktok|twitter|threads|reddit|facebook|fb|sosmed)\\b", "\\bx\\.com\\b", "\\b(media sosial|social media)\\b"],
+  ["\\b(post|posting|publish|unggah|upload|share|bagikan|crosspost|jadwalkan|schedule)\\w*"],
+]
+negatives = ["\\b(lowongan|magang|internships?|intern|pkl|jobs?|apply|melamar|lamar|cv|resume|rekrutmen|hiring)\\b"]
+external_write = true
+summary = "prepare and publish content to explicit social accounts (external write; human approval required)"
+
+[[intent]]
+domain = "social"
+name = "engage"
+stage = "collect"
+skill = "xn-social"
+capabilities = ["social.engagement.read"]
+groups = [
+  ["\\b(linkedin|instagram|ig|tiktok|twitter|threads|reddit|facebook|fb|sosmed)\\b", "\\bx\\.com\\b", "\\b(media sosial|social media)\\b"],
+  ["\\b(comments?|komentar|repl(y|ies)|balas\\w*|react\\w*|likes?|hide|moderasi|moderate)\\b"],
+]
+negatives = ["\\b(lowongan|magang|internships?|intern|pkl|jobs?|apply|melamar|lamar|cv|resume|rekrutmen|hiring)\\b"]
+summary = "read and respond to comments on social accounts"
+
+[[intent]]
+domain = "social"
+name = "analytics"
+stage = "collect"
+skill = "xn-social"
+capabilities = ["social.analytics.read"]
+groups = [
+  ["\\b(linkedin|instagram|ig|tiktok|twitter|threads|reddit|facebook|fb|sosmed)\\b", "\\bx\\.com\\b", "\\b(media sosial|social media)\\b"],
+  ["\\b(analytics|insights?|statistik|metrics?|followers?|impressions?|reach)\\b"],
+]
+negatives = ["\\b(lowongan|magang|internships?|intern|pkl|jobs?|apply|melamar|lamar|cv|resume|rekrutmen|hiring)\\b"]
+summary = "read social account metrics with provenance"
+
+[[intent]]
+domain = "social"
+name = "inspect"
+stage = "inspect"
+skill = "xn-social"
+capabilities = ["social.account.list", "social.capability.read"]
+groups = [
+  ["\\b(linkedin|instagram|ig|tiktok|twitter|threads|reddit|facebook|fb|sosmed)\\b", "\\bx\\.com\\b", "\\b(media sosial|social media)\\b"],
+  ["\\b(akun|accounts?|capabilit\\w*|kemampuan|status|connected|terhubung)\\b"],
+]
+negatives = [
+  "\\b(lowongan|magang|internships?|intern|pkl|jobs?|apply|melamar|lamar|cv|resume|rekrutmen|hiring)\\b",
+  "\\b(connect|hubungkan|sambungkan|login|authori[sz]e|otorisasi)\\w*",
+]
+summary = "list connected social accounts and what they can do"

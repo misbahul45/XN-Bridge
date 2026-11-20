@@ -22,7 +22,7 @@ from . import __version__
 from .app import build
 from .discovery import discover as run_discover
 from .discovery import host_fingerprint, isolation_env
-from .hosts import codex_config, codex_registration, load_host_servers, primary_host
+from .hosts import HOST_CHOICES, codex_config, codex_registration, fingerprint_scope, load_host_servers, primary_host, probe_targets
 from .errors import BridgeError, ValidationFailed
 from .security import mem_available_mb, self_rss_mb
 from .store import jload
@@ -154,6 +154,10 @@ def cmd_approvals(args) -> int:
 def cmd_discover(args) -> int:
     bridge = build()
     project_mcp = Path(args.project_mcp) if args.project_mcp else REPO_ROOT / ".mcp.json"
+    if args.config and args.host == "all":
+        raise ValidationFailed("--config needs an explicit --host")
+    if getattr(args, "via_host", False) and args.host == "all":
+        args.host = "codex"
     specs = load_host_servers(args.host, config=Path(args.config) if args.config else None, project_mcp=project_mcp)
     if getattr(args, "via_host", False):
         if args.host != "codex" or args.config:
@@ -173,17 +177,18 @@ def cmd_discover(args) -> int:
     scratch = bridge.settings.home / "scratch"
     scratch.mkdir(parents=True, exist_ok=True)
     fp = host_fingerprint(specs)
+    targets = probe_targets(specs)
 
     def progress(name: str) -> None:
         print(f"[discover] probing {name} ...", file=sys.stderr, flush=True)
 
     probes = asyncio.run(
         run_discover(
-            specs, only=args.only or None, probe_http=args.probe_http, timeout_s=args.timeout,
+            targets, only=args.only or None, probe_http=args.probe_http, timeout_s=args.timeout,
             isolate=isolation_env(scratch), scratch_cwd=str(scratch), on_progress=progress,
         )
     )
-    delta = bridge.registry.ingest(probes, host_fp=fp, active_servers=[s.name for s in specs])
+    delta = bridge.registry.ingest(probes, host_fp=fp, active_servers=[s.name for s in targets])
     report = {
         "host": args.host,
         "host_fingerprint": fp,
@@ -498,7 +503,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("status", help="state summary").set_defaults(fn=cmd_status)
     sub.add_parser("integrity", help="database integrity check").set_defaults(fn=cmd_integrity)
     d = sub.add_parser("discover", help="audit configured MCP servers (read-only)")
-    d.add_argument("--host", choices=["codex", "claude"], default=primary_host())
+    d.add_argument("--host", choices=list(HOST_CHOICES), default=fingerprint_scope(), help="all (default) audits every host configuration together")
     d.add_argument("--config", help="explicit host configuration path")
     d.add_argument("--via-host", action="store_true", help="use Codex-owned inventory connections instead of direct MCP audit clients")
     d.add_argument("--watch-seconds", type=float, default=0, help="bounded targeted refresh; requires --via-host and --only")

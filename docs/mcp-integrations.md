@@ -71,3 +71,66 @@ uv pip install --python .providers/gmail/bin/python --only-binary :all: -r .prov
 ```
 
 Minimal registrations use absolute executables in `~/.codex/config.toml`. Private backup before these two additions: `/home/misbahul45/.codex/config.toml.xnb-career-backup-1794893498493026745`. The exact entries and installation hashes are in `bench-out/provider-install-receipt.json`. To roll back, close affected sessions and remove only `mcp_servers.career-public`, `mcp_servers.gmail`, and its env table. Alternatively compare and restore that backup; restoring the whole file discards later edits. Leave the previous bridge entry and existing integrations intact. No dependency removal is necessary for rollback.
+
+## Career discovery providers added on 17 November 2026
+
+Registered in project `.mcp.json` first (Claude Code). Backups of the file before each edit are in `data/backups/mcp.json.pre-*`. Later the same day the owner extended registration to user scope and to every other MCP client; see "Registration in every MCP client" at the end of this file.
+
+| Server | What it is | Source, version, license | Boundary |
+|---|---|---|---|
+| `osm` | OpenStreetMap geocoding and Overpass queries, six read-only tools | `@cyanheads/openstreetmap-mcp-server` 0.7.2, Apache-2.0, npm integrity `sha512-EXOvMHNtteTom2grNvpoz7vr9SgBKnHlnLmWKEjOubQXUiJpyw/pZYHI2mglg1kcrNfGveaRe/pkXbuBtJ1TLQ==`, installed with `--ignore-scripts --save-exact` into `.providers/osm` (37 packages, `package-lock.json`) | No key. Spaces Nominatim calls by 1.05 s. User agent `xn-bridge-career-research/0.1`. Two tools (`reverse_geocode`, `lookup_objects`) are denied to save context; the six definitions total 66,485 bytes |
+| `careers-crawl` | Free crawler for company career pages: `crawl_page`, `crawl_site` | Local code, `.providers/crawl/xn_careers_crawl.py`, standard library plus the bridge's own URL safety checks | Obeys robots.txt (unreadable robots means disallow), one request per second per host, one site per crawl, at most 15 pages and depth 2, rejects private addresses, no JavaScript, 1.5 MB page cap. Page text is untrusted |
+| `gmaps` | Google Maps business search: `gmaps_search` | Wrapper `.providers/gmaps/xn_gmaps_mcp.py` around `gosom/google-maps-scraper` (MIT), Docker image pinned by digest `sha256:0b9be6be68ad134dd2e9af30e33def1a5f49295965889daec30f0bd111eb9c7d` (2.06 GB, built 2026-11-15) | Fixed command without a shell, 2 GB memory and 2 CPU limit, no published port, input mounted read-only, one run a minute and 20 a day, query validated, only listing fields returned (no user reviews). Scraping Google Maps pages is outside Google's API terms; Google may block it. One live run returned 20 places for `software house Surabaya` in 30.7 s |
+
+Not installed, on the owner's instruction or by evidence: Firecrawl (cloud needs an API key and paid credits; self-hosting runs API, workers, Playwright, Redis, RabbitMQ, PostgreSQL and FoundationDB). The Google Places MCP (`google-maps-places-mcp`) needs a key and a billing account and its repository declares no license file; it can be added if the owner supplies a key.
+
+Bundled defaults: `src/xnbridge/defaults/policy.toml` classifies these tools READ and `src/xnbridge/defaults/capabilities.toml` maps `places.search` and `web.crawl`, so the skill test that checks declared capabilities stays valid. `data/config/policy.toml` now holds only the owner's `[autonomy]` switch. The catalog stores one host fingerprint, so `capability_resolve` reports these providers as HOST_CONFIG_CHANGED until a full `xnbridge discover` runs under the same host. Skills call the tools directly in the meantime.
+
+Rollback: remove the `osm`, `careers-crawl` and `gmaps` entries from `.mcp.json` (or restore the backup), delete the added `osm`, `careers-crawl` and `gmaps` entries from the bundled `[[risk]]` and capability tables, remove the `mcp__osm__*`, `mcp__careers-crawl__*` and `mcp__gmaps__*` rules from `.claude/settings.json`, then `rm -rf .providers/osm .providers/crawl .providers/gmaps` and `docker rmi gosom/google-maps-scraper` and `docker volume rm xn-gmaps-playwright` if desired.
+
+## Email sending: `gmail-send` (17 November 2026)
+
+Own small provider, `.providers/gmail_send/xn_gmail_send.py`, run with the isolated Gmail Python (MCP 2.3.0, `google-auth-oauthlib` 1.5.0, `google-api-python-client` 2.202.0). It exists because the upstream Gmail provider's permission levels are cumulative: its `send` level also requests `gmail.modify` and `gmail.compose`.
+
+| Item | Detail |
+|---|---|
+| Scope | `https://www.googleapis.com/auth/gmail.send` only. It cannot read, search or change mail |
+| Tools | `gmail_send` (EXTERNAL_WRITE in policy), `gmail_send_status` (READ) |
+| Recipient rule | One plain address. The domain must be the same site as a company domain marked verified in the bridge database (opened read-only), or the address must be listed in `data/private/gmail-send-allow.txt` |
+| Limits | 100 a day, 2 per recipient a day, an identical message is refused for 7 days, stop file `data/STOP_EXTERNAL`, subject one line up to 200 characters, body up to 20,000 characters |
+| Attachments | At most 3 files, `.pdf .docx .txt .md`, 5 MB in total, only from `data/outgoing` or `generated_documents` after symlink resolution |
+| Evidence | The Gmail message id and thread id returned by the API. A failed or timed-out call is recorded OUTCOME_UNKNOWN and must be reconciled, not retried |
+| Secrets | Client file `data/private/gmail-client-secret.json`, token `data/private/gmail-send-token.json` (mode 0600). Both are git-ignored and excluded from bridge backups |
+| Authorization | One command, `.providers/gmail/bin/python .providers/gmail_send/xn_gmail_send.py auth`, starts a loopback listener on a random port, prints the consent URL and stores the token on success |
+
+Tests: 26 offline tests in `tests/unit/test_gmail_send.py`. Live verification on 2026-11-17: authorization completed through the browser (consent screen listed one permission, sending email on the owner's behalf; token scope list contains only `gmail.send`, refresh token present), and one self-test email was sent to the owner's own address through the same code path (Gmail message id `1a1e92b7170f7d46`). The `gmail-send` server itself loads in Claude Code after a restart; sending through the MCP tool has not been exercised yet.
+
+Authorization record: Google account `misbahulmuttaqin395@gmail.com` (the account logged in to the Playwright browser), OAuth client `xn-bridge-gmail-send`, Desktop type, one test user. The legal agreement (Google API Services User Data Policy) was accepted by the owner personally; the consent click was made through Playwright on the owner's instruction after the scope list was checked.
+
+Google Cloud setup used: project `focal-dolphin-412812` ("My First Project"), chosen because the account had reached its project limit and this project had no OAuth configuration. External audience, Testing mode. In Testing mode refresh tokens expire after seven days, so the authorization command has to be repeated weekly until the app is published.
+
+## Registration in every MCP client (17 November 2026)
+
+Owner instructions: "iya lakukan semua" (user-scope registration, hook, core routing rule) and then "kamu daftarkan ke semua mcp system". The five servers `xn-bridge`, `osm`, `careers-crawl`, `gmaps` and `gmail-send` use the exact command, args and env of `.mcp.json`, which stays the source of truth. Existing entries were never overwritten; each write was re-parsed and every earlier key compared equal.
+
+| Client | File | Key | Result |
+|---|---|---|---|
+| Claude Code | `~/.claude.json` (user scope, via `claude mcp add-json -s user`) | `mcpServers` | Five Connected from `$HOME` |
+| Codex | `~/.codex/config.toml` | `mcp_servers` | Four tables appended (`xn-bridge` already existed), `startup_timeout_sec = 30`, `tool_timeout_sec = 180`; `codex mcp list` shows all five enabled; 26 servers in total |
+| OpenCode | `~/.config/opencode/opencode.jsonc` | `mcp` | Five added; `permission."gmail-send_*" = "ask"` added because OpenCode allows unlisted tools; `opencode mcp list` shows all five connected |
+| Cursor | `~/.cursor/mcp.json` | `mcpServers` | Five added |
+| Gemini CLI | `~/.gemini/settings.json` | `mcpServers` | Five added |
+| Kiro | `~/.kiro/settings/mcp.json` | `mcpServers` | Five added |
+| VS Code | `~/.config/Code/User/mcp.json` | `servers` | Five added with `"type": "stdio"` |
+| Zed | `~/.config/zed/settings.json` | `context_servers` | Five added |
+| Windsurf | no MCP config file exists | none | Not created |
+
+Skills `xn-bridge` and `xn-career` are symlinked into `~/.claude/skills`, `~/.codex/skills`, `~/.agents/skills` and `~/.config/opencode/skills`.
+
+Backups sit next to each file as `<file>.xnb-pre-register-20261117T114255Z`; Claude Code's are `~/.claude/backups/claude.json.pre-xn-bridge-user-scope` and `settings.json.pre-career-hook`. Rollback per client: close its sessions, then either delete the five names (and the OpenCode permission key) or restore that client's backup, which discards later edits to the same file. For Claude Code use `claude mcp remove -s user <name>`; never restore `~/.claude.json` wholesale. Remove the skill symlinks with `rm` on the link only.
+
+Verification and gaps: Codex and OpenCode were checked through their own CLIs (Codex lists the configuration, OpenCode connects). Cursor, Gemini, Kiro, VS Code and Zed were verified only by re-parsing the files; none of those applications was started. `xnbridge discover` was not rerun, so `capability_resolve` can report HOST_CONFIG_CHANGED until a full discover under the Codex host. `xnbridge doctor` reports 0 failed and 2 warnings (approver key not initialised, 985 quarantined schemas); whether either predates this change was not determined. Outside this workspace each client's own approval prompts apply to `gmail_send`; only OpenCode needed an explicit rule.
+
+## xn-interact (social, 2026-11-19)
+
+Bun stdio server in `~/code/XN-Interact`, registered in this repo's `.mcp.json`. 22 tools; 20 `social.*` capabilities in `defaults/capabilities.toml`; 22 exact risk rules plus a fail-closed `xn-interact:*` rule in `defaults/policy.toml`; `social` domain in `domains/social.py`; social intents in `defaults/intents.toml`; host skill `xn-social` linked under `.claude/skills` and `.agents/skills`. Every social write is two-phase and needs the owner's `xn-interact approve <id>` in a terminal in addition to `xnbridge approve`. Rollback and backups: `~/code/XN-Interact/docs/integration/host-registration.md`.

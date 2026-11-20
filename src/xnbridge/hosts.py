@@ -8,17 +8,100 @@ from pathlib import Path
 
 from .discovery import ServerSpec, _spec_from_cfg
 from .errors import ValidationFailed
+from .security import canonical_json
+
+JSON_HOST_SOURCES = {
+    "gemini": (".gemini/settings.json", "mcpServers"),
+    "qwen": (".qwen/settings.json", "mcpServers"),
+    "kiro": (".kiro/settings/mcp.json", "mcpServers"),
+    "cursor": (".cursor/mcp.json", "mcpServers"),
+    "pi": (".pi/agent/mcp.json", "mcpServers"),
+    "copilot": (".copilot/mcp-config.json", "mcpServers"),
+    "vscode": (".config/Code/User/mcp.json", "servers"),
+    "zed": (".config/zed/settings.json", "context_servers"),
+    "opencode": (".config/opencode/opencode.json", "mcp"),
+}
+HOST_ORDER = ("claude", "codex", *JSON_HOST_SOURCES)
+HOST_CHOICES = ("all", *HOST_ORDER)
 
 
 def codex_config() -> Path:
     return Path(os.environ.get("CODEX_HOME", str(Path.home() / ".codex"))) / "config.toml"
 
 
-def primary_host() -> str:
+def _env_host() -> str:
     choice = os.environ.get("XN_BRIDGE_HOST", "auto")
-    if choice not in ("auto", "codex", "claude"):
-        raise ValidationFailed("XN_BRIDGE_HOST must be auto, codex or claude")
-    return ("codex" if codex_config().is_file() else "claude") if choice == "auto" else choice
+    if choice != "auto" and choice not in HOST_CHOICES:
+        raise ValidationFailed("XN_BRIDGE_HOST must be auto, all or one of: " + ", ".join(HOST_ORDER))
+    return choice
+
+
+def primary_host() -> str:
+    choice = _env_host()
+    if choice in ("codex", "claude"):
+        return choice
+    return "codex" if codex_config().is_file() else "claude"
+
+
+def fingerprint_scope() -> str:
+    choice = _env_host()
+    return "all" if choice in ("auto", "all") else choice
+
+
+def _json_file(path: Path) -> dict:
+    if not path.is_file():
+        return {}
+    text = path.read_text(encoding="utf-8")
+    try:
+        data = json.loads(text)
+    except ValueError:
+        data = json.loads("\n".join(line for line in text.splitlines() if not line.lstrip().startswith("//")))
+    return data if isinstance(data, dict) else {}
+
+
+def _generic_spec(name: str, cfg: object, source: str) -> ServerSpec | None:
+    if not isinstance(cfg, dict) or cfg.get("disabled") is True or cfg.get("enabled") is False:
+        return None
+    command = cfg.get("command")
+    args = [str(a) for a in (cfg.get("args") or [])]
+    if isinstance(command, list):
+        command, args = (str(command[0]) if command else None), [str(a) for a in command[1:]] + args
+    url = cfg.get("url") or cfg.get("httpUrl")
+    if not command and not url:
+        return None
+    env = cfg.get("env") or cfg.get("environment") or {}
+    return _spec_from_cfg(name, {"type": "http" if url else "stdio", "command": command, "args": args, "env": env, "url": url}, source)
+
+
+def load_json_host_servers(host: str, path: Path | None = None) -> list[ServerSpec]:
+    rel, key = JSON_HOST_SOURCES[host]
+    data = _json_file(path or Path.home() / rel)
+    section = data.get(key)
+    if not isinstance(section, dict):
+        return []
+    specs = [_generic_spec(name, cfg, f"{host}-user") for name, cfg in section.items()]
+    return [s for s in specs if s is not None]
+
+
+def load_all_host_servers() -> list[ServerSpec]:
+    from .discovery import load_claude_servers
+
+    found = load_claude_servers(None, None) + load_codex_servers()
+    for host in JSON_HOST_SOURCES:
+        found += load_json_host_servers(host)
+    unique: dict[tuple[str, str], ServerSpec] = {}
+    for spec in found:
+        if spec.name != "xn-bridge":
+            unique.setdefault((spec.name, canonical_json(spec.material())), spec)
+    return [unique[k] for k in sorted(unique)]
+
+
+def probe_targets(specs: list[ServerSpec]) -> list[ServerSpec]:
+    rank = {h: i for i, h in enumerate(HOST_ORDER)}
+    chosen: dict[str, ServerSpec] = {}
+    for spec in sorted(specs, key=lambda s: (rank.get(s.source.split("-")[0], len(rank)), s.name)):
+        chosen.setdefault(spec.name, spec)
+    return sorted(chosen.values(), key=lambda s: s.name)
 
 
 def load_codex_servers(path: Path | None = None) -> list[ServerSpec]:
@@ -42,13 +125,17 @@ def load_codex_servers(path: Path | None = None) -> list[ServerSpec]:
 def load_host_servers(host: str | None = None, *, config: Path | None = None, project_mcp: Path | None = None) -> list[ServerSpec]:
     from .discovery import load_claude_servers
 
-    host = host or primary_host()
-    if host == "codex":
+    host = host or fingerprint_scope()
+    if host == "all":
+        specs = load_all_host_servers()
+    elif host == "codex":
         specs = load_codex_servers(config)
     elif host == "claude":
-        specs = load_claude_servers(config, project_mcp)
+        specs = load_claude_servers(config, project_mcp or Path(__file__).resolve().parents[2] / ".mcp.json")
+    elif host in JSON_HOST_SOURCES:
+        specs = load_json_host_servers(host, config)
     else:
-        raise ValidationFailed("unsupported host; choose codex or claude")
+        raise ValidationFailed("unsupported host; choose all, codex, claude or " + ", ".join(JSON_HOST_SOURCES))
     # The bridge is a local capability, not a sibling provider to probe recursively.
     return [s for s in specs if s.name != "xn-bridge"]
 

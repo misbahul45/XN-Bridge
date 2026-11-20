@@ -66,6 +66,12 @@ class DomainRegistry:
         for a in actions:
             self._actions[(a.domain, a.name)] = a
 
+    def names(self) -> tuple[str, ...]:
+        return tuple(sorted(self._specs))
+
+    def specs(self) -> tuple[DomainSpec, ...]:
+        return tuple(self._specs[n] for n in sorted(self._specs))
+
     def spec(self, name: str) -> DomainSpec:
         from .errors import NotFound
 

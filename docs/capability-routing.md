@@ -17,3 +17,13 @@ After expanding contract hashes to include output schemas/annotations, old catal
 Use `catalog describe --server <server> --tool <tool>` to load one full contract. `catalog changed --limit 50 --offset 0` paginates compact changed records. Authentication and permission holds survive successful initialize/list. `catalog health --server … --status … --detail …` records a local operator observation and audit event, without granting host/account access. Do not clear a hold based on metadata alone.
 
 The installed `career-public:search_jobs` is a `career.listings` candidate with an observed contract and an actual successful public read. `email.read` maps to two of Gmail's three reviewed read tools, but is DEGRADED while Gmail is AUTH_REQUIRED. No Gmail send or external draft tool is mapped. Exact risk rules cover reviewed operations; unknown/new tools retain EXTERNAL_WRITE risk. Source polling limits are described in [MCP integration operations](mcp-integrations.md).
+
+## One dynamic router
+
+`route_intent` composes three sources at startup, so a new domain or capability needs no routing code:
+
+1. Intents: the tuned career and research intents in `routing.py`, declarative intents in `src/xnbridge/defaults/intents.toml` (social), and local additions or `disabled = true` overrides in `data/config/intents.toml`. Patterns are validated when loaded; intents for unregistered domains are skipped.
+2. Capability index: when no intent matches and the text carries no domain vocabulary, the request is scored against every capability's id, description, `keywords` and provider tool names (Indonesian and English synonyms). A capability route needs both an action word and an object word, and must beat confident rivals by 25%; otherwise the request escalates with the capability candidates attached. A capability added to `data/config/capabilities.toml` is routable immediately.
+3. Live resolution: every decision carries `providers` (selected `server:tool`, status, approval need, degraded behaviour) resolved with the same host fingerprint as `capability_resolve`, a `plan` of the next domain stages with their providers, and `next` (the tool to call).
+
+Deterministic evaluation after the change: dev set 0 confident errors, accuracy 0.927, 0 model calls; held-out set 0 confident errors, accuracy 0.55 (was 0.50).

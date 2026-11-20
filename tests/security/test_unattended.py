@@ -124,3 +124,15 @@ def test_unattended_success_without_confirmation_evidence_is_still_unknown(bridg
     assert out["state"] == "OUTCOME_UNKNOWN"
     with pytest.raises(PolicyDenied):
         act(bridge, ctx["wf"], "tracking.update", {"application_id": ctx["app_id"], "status": "SUBMITTED"})
+
+
+def test_autonomy_never_covers_capabilities_outside_its_allowlist(bridge):
+    wf = bridge.engine.create("social", "autonomy scope")
+    bridge.engine.transition(wf["id"], "RUNNING")
+    enable(bridge)
+    with pytest.raises(PolicyDenied):
+        bridge.executions.begin(workflow_id=wf["id"], capability="social.content.publish", provider="xn-interact:social_content_publish",
+                                idempotency_key="s1", target="https://xn-interact.invalid/plans/pln_scope000000001")
+    assert bridge.executions._unattended_enabled("email.send") and bridge.executions._unattended_enabled("browser.form_fill")
+    assert not bridge.executions._unattended_enabled("social.engagement.act")
+

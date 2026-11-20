@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import fnmatch
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -141,7 +142,7 @@ class ExecutionService:
         exec_id = new_id("ex")
         payload_digest = None
         if risk == "EXTERNAL_WRITE":
-            unattended = not approval_id and self._unattended_enabled()
+            unattended = not approval_id and self._unattended_enabled(capability)
             if not approval_id and not unattended:
                 raise self._approval_required(risk, info.source)
             if not target:
@@ -188,8 +189,14 @@ class ExecutionService:
     def _autonomy(self) -> dict[str, Any]:
         return self.settings.policy.get("autonomy", {})
 
-    def _unattended_enabled(self) -> bool:
-        return bool(self._autonomy().get("unattended_external_writes", False))
+    def _unattended_enabled(self, capability: str | None = None) -> bool:
+        cfg = self._autonomy()
+        if not cfg.get("unattended_external_writes", False):
+            return False
+        if capability is None:
+            return True
+        allowed = cfg.get("capabilities", ["email.send", "browser.*"])
+        return any(fnmatch.fnmatch(capability, str(pat)) for pat in allowed)
 
     def _check_unattended(self, con, target: str) -> None:
         cfg = self._autonomy()
@@ -201,7 +208,7 @@ class ExecutionService:
             "SELECT target FROM executions WHERE risk='EXTERNAL_WRITE' AND approval_id IS NULL AND started_at>=? AND state!='FAILED'",
             (day_start,),
         ).fetchall()
-        per_day = int(cfg.get("max_external_per_day", 25))
+        per_day = int(cfg.get("max_external_per_day", 100))
         per_origin = int(cfg.get("max_external_per_origin_per_day", 5))
         if len(rows) >= per_day:
             raise LimitExceeded("daily cap for unattended external actions reached", details={"cap": per_day})

@@ -174,3 +174,212 @@ cost = "FREE_LIMITED"
 [capability."email.send"]
 description = "Send an email to an external recipient"
 degraded = "No email provider in the inventory. Produce a draft; the user sends it manually."
+
+[capability."places.search"]
+description = "Find companies and offices in a city or region"
+degraded = "No places provider. Ask the user for company names or URLs; do not invent companies."
+[[capability."places.search".provider]]
+server = "osm"
+tool = "openstreetmap_query_bbox"
+cost = "FREE_LIMITED"
+[[capability."places.search".provider]]
+server = "osm"
+tool = "openstreetmap_query_nearby"
+cost = "FREE_LIMITED"
+[[capability."places.search".provider]]
+server = "osm"
+tool = "openstreetmap_search_places"
+cost = "FREE_LIMITED"
+[[capability."places.search".provider]]
+server = "osm"
+tool = "openstreetmap_query_raw"
+cost = "FREE_LIMITED"
+[[capability."places.search".provider]]
+server = "gmaps"
+tool = "gmaps_search"
+cost = "FREE_LIMITED"
+
+[capability."web.crawl"]
+description = "Crawl one company site for career pages, ATS boards, application forms and contact emails"
+degraded = "No crawler. Use web.fetch on the careers URL, or the browser, and report that coverage is partial."
+[[capability."web.crawl".provider]]
+server = "careers-crawl"
+tool = "crawl_site"
+cost = "FREE_LOCAL"
+[[capability."web.crawl".provider]]
+server = "careers-crawl"
+tool = "crawl_page"
+cost = "FREE_LOCAL"
+
+[[capability."email.send".provider]]
+server = "gmail-send"
+tool = "gmail_send"
+cost = "FREE_LIMITED"
+
+[capability."social.account.connect"]
+description = "Start or upgrade official OAuth consent for a social account"
+degraded = "XN-Interact unavailable. The user connects nothing; never ask for passwords or tokens."
+[[capability."social.account.connect".provider]]
+server = "xn-interact"
+tool = "social_auth_connect"
+cost = "FREE_LOCAL"
+
+[capability."social.account.status"]
+description = "Poll OAuth attempt and grant health"
+degraded = "Report connection state as unknown."
+[[capability."social.account.status".provider]]
+server = "xn-interact"
+tool = "social_auth_status"
+cost = "FREE_LOCAL"
+
+[capability."social.account.disconnect"]
+description = "Revoke a social grant and purge it locally"
+degraded = "Tell the user to revoke access in the provider's account settings."
+[[capability."social.account.disconnect".provider]]
+server = "xn-interact"
+tool = "social_auth_disconnect"
+cost = "PROVIDER_METERED"
+
+[capability."social.account.list"]
+description = "List connected social accounts"
+degraded = "No account list; ask the user which account they mean and do not act."
+[[capability."social.account.list".provider]]
+server = "xn-interact"
+tool = "social_accounts_list"
+cost = "FREE_LOCAL"
+
+[capability."social.capability.read"]
+description = "Resolved per-account capability verdicts"
+degraded = "Treat every operation as UNVERIFIED; do not attempt writes."
+[[capability."social.capability.read".provider]]
+server = "xn-interact"
+tool = "social_capabilities_get"
+cost = "FREE_LOCAL"
+
+[capability."social.content.read"]
+description = "Read authorized posts"
+degraded = "Ask the user to paste the post text or link."
+[[capability."social.content.read".provider]]
+server = "xn-interact"
+tool = "social_content_list"
+cost = "PROVIDER_METERED"
+[[capability."social.content.read".provider]]
+server = "xn-interact"
+tool = "social_content_get"
+cost = "PROVIDER_METERED"
+
+[capability."social.content.draft"]
+description = "Prepare a local cross-platform draft and preview"
+degraded = "Keep the draft as text in the workflow; nothing is published."
+[[capability."social.content.draft".provider]]
+server = "xn-interact"
+tool = "social_content_create"
+cost = "FREE_LOCAL"
+
+[capability."social.content.publish"]
+description = "Publish approved content to explicit accounts"
+degraded = "Deliver the prepared draft; the user publishes manually."
+[[capability."social.content.publish".provider]]
+server = "xn-interact"
+tool = "social_content_publish"
+cost = "PROVIDER_METERED"
+
+[capability."social.content.update"]
+description = "Edit owned content where supported"
+degraded = "The user edits the post manually."
+[[capability."social.content.update".provider]]
+server = "xn-interact"
+tool = "social_content_update"
+cost = "PROVIDER_METERED"
+
+[capability."social.content.delete"]
+description = "Delete owned content"
+degraded = "The user deletes the post manually."
+[[capability."social.content.delete".provider]]
+server = "xn-interact"
+tool = "social_content_delete"
+cost = "PROVIDER_METERED"
+
+[capability."social.engagement.read"]
+description = "Read comments, replies and reactions"
+degraded = "Ask the user to paste the comments."
+[[capability."social.engagement.read".provider]]
+server = "xn-interact"
+tool = "social_engagement_list"
+cost = "PROVIDER_METERED"
+
+[capability."social.engagement.act"]
+description = "Approved reply, react or hide"
+degraded = "Draft the reply; the user posts it manually."
+[[capability."social.engagement.act".provider]]
+server = "xn-interact"
+tool = "social_engagement_execute"
+cost = "PROVIDER_METERED"
+
+[capability."social.search"]
+description = "Provider-allowed search"
+degraded = "Use web.search and label results as unverified leads."
+[[capability."social.search".provider]]
+server = "xn-interact"
+tool = "social_search"
+cost = "PROVIDER_METERED"
+
+[capability."social.analytics.read"]
+description = "Structured metrics with provenance"
+degraded = "Ask the user for an exported report; never estimate metrics."
+[[capability."social.analytics.read".provider]]
+server = "xn-interact"
+tool = "social_analytics_get"
+cost = "PROVIDER_METERED"
+
+[capability."social.media.stage"]
+description = "Validate and stage local media in the sandbox"
+degraded = "Text-only content; the user attaches media manually."
+[[capability."social.media.stage".provider]]
+server = "xn-interact"
+tool = "social_media_upload"
+cost = "FREE_LOCAL"
+
+[capability."social.workflow.run"]
+description = "Plan or execute a declared XN-Interact skill"
+degraded = "Run the steps manually with the user."
+[[capability."social.workflow.run".provider]]
+server = "xn-interact"
+tool = "social_workflows_execute"
+cost = "PROVIDER_METERED"
+
+[capability."social.workflow.status"]
+description = "XN-Interact run state and scoped results"
+degraded = "Report the run outcome as unknown and reconcile."
+[[capability."social.workflow.status".provider]]
+server = "xn-interact"
+tool = "social_workflows_status"
+cost = "FREE_LOCAL"
+[[capability."social.workflow.status".provider]]
+server = "xn-interact"
+tool = "social_results_get"
+cost = "FREE_LOCAL"
+
+[capability."social.workflow.cancel"]
+description = "Stop future XN-Interact steps"
+degraded = "Tell the user cancellation could not be recorded."
+[[capability."social.workflow.cancel".provider]]
+server = "xn-interact"
+tool = "social_workflows_cancel"
+cost = "FREE_LOCAL"
+
+[capability."social.approval.status"]
+description = "Read XN-Interact human approval decisions"
+degraded = "Treat the approval as not granted."
+[[capability."social.approval.status".provider]]
+server = "xn-interact"
+tool = "social_approvals_status"
+cost = "FREE_LOCAL"
+
+[capability."social.health"]
+description = "Vault, provider, workflow and quota readiness"
+degraded = "Treat XN-Interact as unavailable."
+[[capability."social.health".provider]]
+server = "xn-interact"
+tool = "social_system_health"
+cost = "FREE_LOCAL"
