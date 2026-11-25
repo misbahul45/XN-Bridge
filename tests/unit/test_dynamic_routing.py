@@ -106,3 +106,20 @@ def test_one_router_spans_every_domain(bridge):
         "lihat analytics tiktok minggu ini",
     ]}
     assert seen == {"career", "research", "social"}
+
+
+def test_registered_dataset_intents_use_dynamic_provider_resolution(bridge):
+    from xnbridge.discovery import ServerProbe, ToolMeta
+
+    names = ["social_extract_start", "social_extract_sources", "social_datasets_query", "social_datasets_export"]
+    bridge.registry.ingest([ServerProbe(server="xn-interact", transport="stdio", status="OK", tools=[
+        ToolMeta(name, name, {"type": "object"}, None) for name in names
+    ])])
+    route = build_router(bridge).route("Kumpulkan dataset dari situs yang sudah diotorisasi")
+    assert route.intent == "data.collect"
+    assert route.providers["data.collect"]["selected"] == "xn-interact:social_extract_start"
+    selected = bridge.registry.resolve("data.collect")["selected"]
+    assert selected["risk"] == "LOCAL_WRITE"
+    assert selected["runtime"]["browser_mode"] == "headless"
+    assert selected["runtime"]["requires_extension"] is False
+    assert build_router(bridge).route("Ekspor dataset ke CSV").intent == "data.export"

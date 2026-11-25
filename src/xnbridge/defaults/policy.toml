@@ -332,5 +332,29 @@ tool = "social_system_health"
 risk = "READ"
 [[risk]]
 server = "xn-interact"
+tool = "social_web_feed_read"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_web_jobs_search"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_extract_sources"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_extract_start"
+risk = "LOCAL_WRITE"
+[[risk]]
+server = "xn-interact"
+tool = "social_datasets_query"
+risk = "READ"
+[[risk]]
+server = "xn-interact"
+tool = "social_datasets_export"
+risk = "LOCAL_WRITE"
+[[risk]]
+server = "xn-interact"
 tool = "*"
 risk = "EXTERNAL_WRITE"

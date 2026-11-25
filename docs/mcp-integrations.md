@@ -1,5 +1,7 @@
 # MCP career integrations — 17 November 2026
 
+XN-Interact's stdio server advertises `data.source.read`, `data.collect`, `data.dataset.query` and `data.dataset.export`. XN-Bridge resolves the local Playwright headless backend through its dynamic router. Use source discovery for authorization and readiness, and register compact dataset references and coverage as evidence. The LinkedIn Jobs and feed routes remain available as legacy tool contracts and require documented platform permission.
+
 Two additional local stdio providers are installed and registered in Codex: `career-public` and `gmail`. Existing 20 registrations and all other parsed configuration values were preserved. This extends discovery and prepares read-only mailbox tracking; it does not authorize applications or email sends.
 
 ## Discovery scope and selection

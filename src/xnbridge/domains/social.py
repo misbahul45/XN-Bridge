@@ -19,7 +19,7 @@ SPEC = DomainSpec(
     stages=(
         StageSpec("connect", "Connect or reauthorize the accounts the task needs", optional_capabilities=("social.account.connect", "social.account.status"), risk="LOCAL_WRITE", optional=True),
         StageSpec("inspect", "Resolve explicit target accounts and their capability verdicts", capabilities=("social.account.list", "social.capability.read"), optional_capabilities=("social.health",), actions=("targets.set",)),
-        StageSpec("collect", "Read content, engagement, search results or analytics", optional_capabilities=("social.content.read", "social.engagement.read", "social.search", "social.analytics.read"), optional=True),
+        StageSpec("collect", "Read content, engagement, search results or analytics", optional_capabilities=("social.content.read", "social.engagement.read", "social.search", "social.analytics.read", "social.linkedin.read"), optional=True),
         StageSpec("prepare", "Prepare a local draft, media and per-provider previews", optional_capabilities=("social.content.draft", "social.media.stage"), risk="LOCAL_WRITE", optional=True),
         StageSpec(
             "act",

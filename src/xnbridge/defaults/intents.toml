@@ -1,4 +1,40 @@
 [[intent]]
+domain = "data"
+name = "collect"
+stage = "collect"
+skill = "xn-bridge"
+capabilities = ["data.source.read", "data.collect"]
+groups = [
+  ["\\b(dataset|data terstruktur|structured data)\\b"],
+  ["\\b(collect|extract|crawl|kumpulkan|ambil|ekstrak|sinkronkan|synchronize|enrich|lengkapi)\\b"],
+]
+summary = "collect and normalize permitted records from a registered browser source"
+
+[[intent]]
+domain = "data"
+name = "query"
+stage = "query"
+skill = "xn-bridge"
+capabilities = ["data.dataset.query"]
+groups = [
+  ["\\b(dataset|data terstruktur)\\b"],
+  ["\\b(query|filter|sort|lihat|tampilkan|saring|urutkan)\\b"],
+]
+summary = "query a local dataset by reference"
+
+[[intent]]
+domain = "data"
+name = "export"
+stage = "export"
+skill = "xn-bridge"
+capabilities = ["data.dataset.export"]
+groups = [
+  ["\\b(dataset|csv|jsonl|sqlite)\\b"],
+  ["\\b(export|ekspor)\\b"],
+]
+summary = "export a local dataset and return its reference"
+
+[[intent]]
 domain = "social"
 name = "connect"
 stage = "connect"

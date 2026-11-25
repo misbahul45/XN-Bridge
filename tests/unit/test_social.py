@@ -29,6 +29,8 @@ TOOLS = {
     "social_results_get": "READ",
     "social_approvals_status": "READ",
     "social_system_health": "READ",
+    "social_web_feed_read": "READ",
+    "social_web_jobs_search": "READ",
 }
 
 A1 = "acc_member000000001"
@@ -44,9 +46,9 @@ def test_every_xn_interact_tool_has_the_catalog_risk(bridge):
     assert bridge.classifier.classify("xn-interact", "social_future_tool").risk == "EXTERNAL_WRITE"
 
 
-def test_twenty_social_capabilities_map_to_xn_interact(bridge):
+def test_social_capabilities_map_to_xn_interact(bridge):
     caps = {k: v for k, v in bridge.settings.capabilities["capability"].items() if k.startswith("social.")}
-    assert len(caps) == 20
+    assert len(caps) == 21
     mapped = sorted(p["tool"] for c in caps.values() for p in c["provider"])
     assert mapped == sorted(TOOLS)
     assert all(p["server"] == "xn-interact" for c in caps.values() for p in c["provider"])
@@ -131,3 +133,13 @@ def test_evidence_register_accepts_json_tool_output(tmp_path):
 
     err, out = asyncio.run(run())
     assert not err and out["verification"] == "VERIFIED"
+
+
+def test_career_reader_capabilities_reuse_the_web_reader_tools(bridge):
+    caps = bridge.settings.capabilities["capability"]
+    assert [p["tool"] for p in caps["career.linkedin_jobs"]["provider"]] == ["social_web_jobs_search"]
+    assert [p["tool"] for p in caps["career.feed_leads"]["provider"]] == ["social_web_feed_read"]
+    assert caps["career.listings"]["provider"][0]["server"] == "career-public"
+    stages = {s.name: s for s in bridge.domains.spec("career").stages}
+    for stage in ("company-discovery", "opportunity-verification"):
+        assert {"career.linkedin_jobs", "career.feed_leads"} <= set(stages[stage].optional_capabilities)

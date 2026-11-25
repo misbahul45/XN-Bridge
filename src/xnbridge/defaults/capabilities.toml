@@ -383,3 +383,68 @@ degraded = "Treat XN-Interact as unavailable."
 server = "xn-interact"
 tool = "social_system_health"
 cost = "FREE_LOCAL"
+
+[capability."social.linkedin.read"]
+description = "Legacy approved-scope LinkedIn Jobs and feed reader"
+degraded = "Use permitted employer career pages and official ATS boards when the dedicated reader lacks documented platform permission or session readiness."
+[[capability."social.linkedin.read".provider]]
+server = "xn-interact"
+tool = "social_web_feed_read"
+cost = "FREE_LIMITED"
+[[capability."social.linkedin.read".provider]]
+server = "xn-interact"
+tool = "social_web_jobs_search"
+cost = "FREE_LIMITED"
+
+[capability."career.linkedin_jobs"]
+description = "Lead discovery from the legacy LinkedIn Jobs reader with documented platform permission"
+degraded = "Use career.listings, permitted employer career pages and official ATS boards."
+[[capability."career.linkedin_jobs".provider]]
+server = "xn-interact"
+tool = "social_web_jobs_search"
+cost = "FREE_LIMITED"
+
+[capability."career.feed_leads"]
+description = "Lead discovery from the legacy LinkedIn feed reader with documented platform permission"
+degraded = "Use career.listings and permitted employer career pages."
+[[capability."career.feed_leads".provider]]
+server = "xn-interact"
+tool = "social_web_feed_read"
+cost = "FREE_LIMITED"
+
+[capability."data.source.read"]
+description = "List authorized browser dataset sources and observed session readiness"
+degraded = "No source catalog is available"
+[[capability."data.source.read".provider]]
+server = "xn-interact"
+tool = "social_extract_sources"
+cost = "FREE_LOCAL"
+
+[capability."data.collect"]
+description = "Extract and collect a dataset from an authorized website using headless Chrome"
+keywords = ["exhaustive", "dataset", "pagination", "incremental", "extract", "collect"]
+requires_network = true
+degraded = "Check XN-Interact source registration and broker readiness"
+[[capability."data.collect".provider]]
+server = "xn-interact"
+tool = "social_extract_start"
+cost = "FREE_LOCAL"
+runtime = { auth_mode = "browser_session", execution_backend = "playwright", browser_mode = "headless", runtime_location = "local", startup_policy = "on_demand", requires_browser = true, requires_authorized_source = true, requires_extension = false, requires_visible_browser = false }
+
+[capability."data.dataset.query"]
+description = "Query, filter and page through a local dataset reference"
+keywords = ["dataset", "query", "filter"]
+degraded = "Dataset queries are unavailable"
+[[capability."data.dataset.query".provider]]
+server = "xn-interact"
+tool = "social_datasets_query"
+cost = "FREE_LOCAL"
+
+[capability."data.dataset.export"]
+description = "Export a local dataset to JSON, JSONL, CSV or SQLite"
+keywords = ["dataset", "export", "csv", "jsonl", "sqlite"]
+degraded = "No dataset export was created"
+[[capability."data.dataset.export".provider]]
+server = "xn-interact"
+tool = "social_datasets_export"
+cost = "FREE_LOCAL"

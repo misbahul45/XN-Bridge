@@ -1,12 +1,12 @@
 ---
 name: xn-career
-description: Career intelligence for PKL, internships, graduate and entry-level roles in any region: discover and verify companies and openings, eligibility-first matching, truthful application drafts, supervised submission and tracking. Use when the user asks to find, check, prepare or track an internship or job application.
+description: "Career intelligence for PKL, internships, graduate and entry-level roles in any region: discover and verify companies and openings, eligibility-first matching, truthful application drafts, supervised submission and tracking. Use when the user asks to find, check, prepare or track an internship or job application."
 ---
 
 # XN-Bridge career workflow
 
 Required capabilities: web.search, web.fetch, ats.board_read, browser.form_fill, workflow.persist, evidence.store
-Optional capabilities: career.listings, places.search, web.crawl, document.extract, document.generate, browser.inspect, browser.upload
+Optional capabilities: career.listings, career.linkedin_jobs, career.feed_leads, places.search, web.crawl, document.extract, document.generate, browser.inspect, browser.upload
 
 Use with the `xn-bridge` skill. Start with `workflow_create(domain="career")` and follow `next_action`; it names the single reference to read for the current stage. Actions run through `domain_action(domain="career", action=..., workflow_id=...)`; `action="?"` lists them.
 
@@ -32,3 +32,5 @@ Use with the `xn-bridge` skill. Start with `workflow_create(domain="career")` an
 - Never solve CAPTCHA, log in for the user, or answer legal, consent or identity declarations for them.
 - Submitting needs a human-granted approval bound to the exact payload and target, unless `bridge_status` reports `unattended_external_writes: true`, which only the owner can enable. Then the bridge caps and the stop file apply. Otherwise, if approval cannot be enforced, stop before the final click and let the user press it.
 - Existing tools are reused: if `career.listings` resolves, use those tools for listing search instead of scraping.
+- LinkedIn is a lead source, never evidence of a vacancy or of a company's identity. `career.linkedin_jobs` (`social_web_jobs_search`) and `career.feed_leads` (`social_web_feed_read`) read it read-only in the owner's own Chrome. Their results go to `opportunities.ingest` as LISTED_UNCERTAIN until a fresh official employer or ATS page supports them.
+- When a reader tool returns `MANUAL_ONLY`, follow its `actionable_next_step`. Missing platform permission means using permitted employer sites or ATS boards. The daily cap is shared across callers.

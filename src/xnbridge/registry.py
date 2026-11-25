@@ -175,10 +175,10 @@ class Registry:
             for prov in entry.get("provider", []):
                 server, tool = prov["server"], prov["tool"]
                 ident = f"{server}:{tool}"
-                if self.settings.policy["network"]["offline"] and capability in {
-                    "web.search", "web.fetch", "career.listings", "ats.board_read", "paper.search",
+                if self.settings.policy["network"]["offline"] and (entry.get("requires_network", False) or capability in {
+                    "web.search", "web.fetch", "career.listings", "career.linkedin_jobs", "career.feed_leads", "social.linkedin.read", "ats.board_read", "paper.search",
                     "browser.navigate", "browser.form_fill", "browser.upload", "email.send",
-                }:
+                }):
                     excluded.append({"provider": ident, "reason": "OFFLINE"})
                     continue
                 risk = self.classifier.classify(server, tool, stage_risk)
@@ -222,6 +222,7 @@ class Registry:
                         "requires_approval": requires_approval(risk.risk),
                         "cost": prov.get("cost", "UNKNOWN"),
                         "schema_digest": digest[:12] if digest else None,
+                        **({"runtime": prov["runtime"]} if "runtime" in prov else {}),
                         "_failures": failures,
                     }
                 )
